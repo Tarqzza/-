@@ -1,0 +1,162 @@
+/* Formal & Clean Styling for Thammasat Faculty of Liberal Arts Room Booking System */
+:root {
+  --tu-red: #991b1b;
+  --tu-red-dark: #7f1d1d;
+  --tu-red-light: #fef2f2;
+  --tu-gold: #b45309;
+  --tu-gold-light: #fffbeb;
+  --tu-green: #059669;
+  --tu-green-light: #ecfdf5;
+  --navy-900: #0f172a;
+  --navy-800: #1e293b;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Prompt', 'Sarabun', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: #1e293b;
+  background-color: #f8fafc;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Navigation button adjustments */
+.nav-tab-btn {
+  white-space: nowrap; /* Prevent text wrapping */
+  min-width: 80px; /* Ensure enough width */
+  text-align: center;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+/* Header layout fixes */
+header .flex {
+  flex-wrap: nowrap; /* Prevent items from wrapping */
+  align-items: center;
+}
+
+/* Quick CTA button spacing */
+header .flex > .inline-flex + .relative {
+  margin-left: 0.5rem;
+}
+
+/* Ensure role selector and label stay on one line */
+#role-selector {
+  min-width: 200px;
+}
+
+/* Reduce gap between nav groups */
+#user-nav-group, #admin-nav-group {
+  gap: 0.5rem;
+}
+
+/* Eye-soothing Card & Transition Effects */
+.room-card {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
+}
+.room-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px -6px rgba(15, 23, 42, 0.08), 0 4px 8px -2px rgba(15, 23, 42, 0.03);
+}
+
+/* Soft Pulsing Status Dot */
+@keyframes status-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(1.15);
+  }
+}
+.status-dot-pulse {
+  animation: status-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Interactive Timeline Slots */
+.time-slot {
+  transition: all 0.12s ease-in-out;
+  user-select: none;
+}
+.time-slot:hover:not(.slot-booked):not(.slot-pending) {
+  background-color: #eff6ff;
+  border-color: #3b82f6;
+  cursor: pointer;
+}
+.slot-available {
+  background-color: #ffffff;
+  border-color: #e2e8f0;
+  color: #334155;
+}
+.slot-selected {
+  background-color: #991b1b !important;
+  color: #ffffff !important;
+  border-color: #991b1b !important;
+}
+.slot-booked {
+  background-color: #f1f5f9 !important;
+  border-color: #e2e8f0 !important;
+  color: #94a3b8 !important;
+  cursor: not-allowed;
+  position: relative;
+  background-image: repeating-linear-gradient(45deg, #f8fafc, #f8fafc 6px, #f1f5f9 6px, #f1f5f9 12px);
+}
+.slot-pending {
+  background-color: #fffbeb !important;
+  border-color: #fde68a !important;
+  color: #b45309 !important;
+  cursor: not-allowed;
+}
+
+/* Master Gantt Timeline styling */
+.gantt-hour-cell {
+  min-width: 65px;
+  border-right: 1px dashed #e2e8f0;
+}
+.gantt-booking-chip {
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.gantt-booking-chip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+  z-index: 20;
+}
+
+/* Inline error styles */
+.input-error {
+  border-color: #dc2626 !important;
+  background-color: #fef2f2 !important;
+}
+.error-msg {
+  color: #dc2626;
+  font-size: 0.75rem;
+  margin-top: 0.35rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Heatmap Grid */
+.heatmap-cell {
+  transition: transform 0.15s ease;
+  border-radius: 4px;
+}
+.heatmap-cell:hover {
+  transform: scale(1.06);
+  z-index: 10;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+}
+
+/* LINE Notification simulator screen */
+.line-screen {
+  background-color: #6b9ec2;
+}
+.line-bubble-white {
+  background-color: #ffffff;
+  color: #1f2937;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}

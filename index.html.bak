@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบจองห้องประชุม คณะศิลปศาสตร์ มหาวิทยาลัยธรรมศาสตร์</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            tu: {
+              red: '#b91c1c',
+              reddark: '#991b1b',
+              yellow: '#f59e0b',
+              gold: '#d97706',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts: Sarabun & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-slate-50/80 text-slate-800 antialiased min-h-screen flex flex-col font-['Sarabun',sans-serif]">
+
+  <!-- Top Emergency Announcement Banner -->
+  <div id="emergency-banner-container" class="hidden"></div>
+
+  <!-- Minimal Role Switcher Bar (Staff & Operations Only) -->
+  <div class="bg-slate-900 text-slate-300 text-xs px-4 py-1.5 border-b border-slate-800">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-2.5">
+        <span class="text-slate-400">มุมมองการใช้งาน:</span>
+        <select 
+          id="role-selector" 
+          onchange="App.setRole(this.value)" 
+          class="bg-slate-800 text-white border border-slate-700 rounded-md px-2.5 py-1 text-xs focus:outline-none focus:border-slate-500 font-medium cursor-pointer"
+        >
+          <option value="staff" selected>อาจารย์ / บุคลากร (ผู้จองห้อง)</option>
+          <option value="admin">ผู้ดูแลระบบ (งานบริหารกลาง)</option>
+          <option value="housekeeping">ฝ่ายอาคารสถานที่ / จัดเลี้ยง</option>
+          <option value="it_support">ฝ่ายโสตทัศนูปกรณ์ (IT Support)</option>
+        </select>
+      </div>
+      <div class="text-[11px] text-slate-400 hidden sm:block">
+        ระบบบริหารจัดการพื้นที่และห้องประชุม คณะศิลปศาสตร์ มธ.
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Navbar -->
+  <header class="bg-white border-b border-slate-200/80 sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="flex items-center justify-between h-16">
+        
+        <!-- Logo & Branding -->
+        <div class="flex items-center gap-3 cursor-pointer" onclick="App.switchTab('catalog')">
+          <div class="w-9 h-9 rounded-lg bg-red-800 text-white flex items-center justify-center font-bold text-base tracking-tight">
+            TU
+          </div>
+          <div>
+            <div class="text-[11px] font-semibold text-red-800 tracking-wider uppercase leading-none mb-0.5">Faculty of Liberal Arts</div>
+            <div class="text-sm font-bold text-slate-900 leading-tight">ระบบจองห้องประชุม คณะศิลปศาสตร์</div>
+          </div>
+        </div>
+
+        <!-- Navigation Links: Staff View Group -->
+        <nav id="user-nav-group" class="hidden md:flex items-center gap-1.5">
+          <button 
+            data-tab="catalog" 
+            onclick="App.switchTab('catalog')"
+            class="nav-tab-btn px-3.5 py-2 rounded-lg text-sm font-medium transition-colors"
+          >
+            รายการห้องประชุม
+          </button>
+          <button 
+            data-tab="booking" 
+            onclick="App.switchTab('booking')"
+            class="nav-tab-btn px-3.5 py-2 rounded-lg text-sm font-medium transition-colors"
+          >
+            จองห้องประชุม
+          </button>
+          <button 
+            data-tab="my_bookings" 
+            onclick="App.switchTab('my_bookings')"
+            class="nav-tab-btn px-3.5 py-2 rounded-lg text-sm font-medium transition-colors"
+          >
+            การจองของฉัน
+          </button>
+        </nav>
+
+        <!-- Navigation Links: Admin & Operations View Group -->
+        <nav id="admin-nav-group" class="hidden md:flex items-center gap-1">
+          <button 
+            data-tab="admin_timeline" 
+            onclick="App.switchTab('admin_timeline')"
+            class="nav-tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+          >
+            ตารางการใช้ห้อง
+          </button>
+          <button 
+            data-tab="admin_kanban" 
+            onclick="App.switchTab('admin_kanban')"
+            class="nav-tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+          >
+            ติดตามสถานะคำขอ
+          </button>
+          <button 
+            data-tab="admin_dispatch" 
+            onclick="App.switchTab('admin_dispatch')"
+            class="nav-tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+          >
+            คิวงานบริการเสริม
+          </button>
+          <button 
+            data-tab="admin_stats" 
+            onclick="App.switchTab('admin_stats')"
+            class="nav-tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+          >
+            สถิติการใช้งาน
+          </button>
+          <button 
+            data-tab="admin_settings" 
+            onclick="App.switchTab('admin_settings')"
+            class="nav-tab-btn px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+          >
+            ตั้งค่าระบบ
+          </button>
+        </nav>
+
+        <!-- Right User Profile & Notification Bell -->
+        <div class="flex items-center gap-3">
+          <button 
+            type="button"
+            class="relative p-2 rounded-lg hover:bg-slate-100 text-slate-600 transition-colors" 
+            onclick="App.showToast('มีการแจ้งเตือน 2 รายการใหม่')"
+            title="การแจ้งเตือน"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+            <span id="notif-badge" class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-600 rounded-full ring-2 ring-white"></span>
+          </button>
+
+          <div id="user-profile-badge" class="border-l border-slate-200 pl-3"></div>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Nav Tab Bar (Role-aware) -->
+  <div id="mobile-nav-bar" class="md:hidden bg-white border-b border-slate-200 px-4 py-2 overflow-x-auto flex items-center gap-1.5 text-xs whitespace-nowrap">
+    <!-- Rendered dynamically by App.renderHeader() -->
+  </div>
+
+  <!-- Dynamic Main Content Area -->
+  <main id="main-content" class="flex-1"></main>
+
+  <!-- Global Footer -->
+  <footer class="bg-white text-slate-500 py-6 border-t border-slate-200 text-xs mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div>
+        <span class="font-semibold text-slate-800">คณะศิลปศาสตร์ มหาวิทยาลัยธรรมศาสตร์</span>
+        <span class="mx-2 text-slate-300">|</span>
+        <span>ศูนย์ท่าพระจันทร์ และ ศูนย์รังสิต</span>
+      </div>
+      <div class="text-slate-400">
+        ระบบบริการจองห้องประชุมสำหรับคณาจารย์และบุคลากร
+      </div>
+    </div>
+  </footer>
+
+  <!-- Generic Pop-up Modal Container -->
+  <div id="generic-modal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+    <div id="generic-modal-content" class="bg-white rounded-xl shadow-xl border border-slate-200 max-w-lg w-full max-h-[90vh] overflow-y-auto">
+      <!-- Injected dynamically -->
+    </div>
+  </div>
+
+  <!-- Toast Notification Floating Element -->
+  <div id="toast" class="hidden"></div>
+
+  <!-- Scripts -->
+  <script src="js/calendar-export.js"></script>
+  <script src="js/timeline.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

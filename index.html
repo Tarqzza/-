@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบจองห้องประชุม คณะศิลปศาสตร์ มหาวิทยาลัยธรรมศาสตร์</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Prompt', 'Sarabun', 'Inter', 'sans-serif'],
+          },
+          colors: {
+            tu: {
+              red: '#991b1b',
+              reddark: '#7f1d1d',
+              redlight: '#fef2f2',
+              yellow: '#f59e0b',
+              gold: '#d97706',
+              goldlight: '#fffbeb',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts: Prompt, Sarabun & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Prompt:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-slate-50/70 text-slate-800 antialiased min-h-screen flex flex-col font-['Prompt','Sarabun',sans-serif]">
+
+  <!-- Top Emergency Announcement Banner -->
+  <div id="emergency-banner-container" class="hidden"></div>
+
+  <!-- Sleek Top Institutional & Role Switcher Bar -->
+  <div class="bg-slate-900/95 text-slate-300 text-xs px-4 py-1.5 border-b border-slate-800/80 backdrop-blur-xs">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center gap-1.5 text-slate-400">
+          <i data-lucide="user-check" class="w-3.5 h-3.5 text-slate-400"></i>
+          <span>สลับบทบาทใช้งาน:</span>
+        </span>
+        <select 
+          id="role-selector" 
+          onchange="App.setRole(this.value)" 
+          class="bg-slate-800/90 text-white border border-slate-700 rounded-lg px-2.5 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-red-500 font-medium cursor-pointer transition-colors"
+        >
+          <option value="staff" selected>อาจารย์ / บุคลากร (ผู้จองห้อง)</option>
+          <option value="admin">ผู้ดูแลระบบ (งานบริหารกลาง)</option>
+          <option value="housekeeping">ฝ่ายอาคารสถานที่ / จัดเลี้ยง</option>
+          <option value="it_support">ฝ่ายโสตทัศนูปกรณ์ (IT Support)</option>
+        </select>
+      </div>
+      <div class="text-[11px] text-slate-400 hidden sm:flex items-center gap-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+        <span>ระบบจองห้องประชุม คณะศิลปศาสตร์ มหาวิทยาลัยธรรมศาสตร์</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Navbar -->
+  <header class="bg-white/95 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-40 transition-shadow duration-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="flex items-center justify-between h-16">
+        
+        <!-- Logo & Branding -->
+        <div class="flex items-center gap-3 cursor-pointer group" onclick="App.switchTab('catalog')" title="กลับหน้าหลัก">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-800 to-red-900 text-white flex items-center justify-center font-bold text-base shadow-xs group-hover:scale-105 transition-transform">
+            TU
+          </div>
+          <div>
+            <div class="text-[11px] font-semibold text-red-800 tracking-wider uppercase leading-none mb-0.5 flex items-center gap-1.5">
+              <span>Faculty of Liberal Arts</span>
+              <span class="text-slate-300">|</span>
+              <span class="text-slate-500 font-normal">มธ.</span>
+            </div>
+            <div class="text-sm font-bold text-slate-900 leading-tight">ระบบจองห้องประชุม คณะศิลปศาสตร์</div>
+          </div>
+        </div>
+
+        <!-- Navigation Links: Staff View Group -->
+        <nav id="user-nav-group" class="hidden md:flex items-center gap-1">
+          <button 
+            data-tab="catalog" 
+            onclick="App.switchTab('catalog')"
+            class="nav-tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all"
+          >
+            <i data-lucide="layout-grid" class="w-4 h-4"></i>
+            <span>รายการห้องประชุม</span>
+          </button>
+          <button 
+            data-tab="booking" 
+            onclick="App.switchTab('booking')"
+            class="nav-tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all"
+          >
+            <i data-lucide="calendar" class="w-4 h-4"></i>
+            <span>จองห้องประชุม</span>
+          </button>
+          <button 
+            data-tab="my_bookings" 
+            onclick="App.switchTab('my_bookings')"
+            class="nav-tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all"
+          >
+            <i data-lucide="bookmark-check" class="w-4 h-4"></i>
+            <span>การจองของฉัน</span>
+          </button>
+        </nav>
+
+        <!-- Navigation Links: Admin & Operations View Group -->
+        <nav id="admin-nav-group" class="hidden md:flex items-center gap-1">
+          <button 
+            data-tab="admin_timeline" 
+            onclick="App.switchTab('admin_timeline')"
+            class="nav-tab-btn px-3 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all"
+          >
+            <i data-lucide="calendar-range" class="w-4 h-4"></i>
+            <span>ตารางการใช้ห้อง</span>
+          </button>
+          <button 
+            data-tab="admin_kanban" 
+            onclick="App.switchTab('admin_kanban')"
+            class="nav-tab-btn px-3 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all"
+          >
+            <i data-lucide="columns-3" class="w-4 h-4"></i>
+            <span>ติดตามสถานะ</span>
+          </button>
+          <button 
+            data-tab="admin_dispatch" 
+            onclick="App.switchTab('admin_dispatch')"
+            class="nav-tab-btn px-3 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all"
+          >
+            <i data-lucide="coffee" class="w-4 h-4"></i>
+            <span>คิวงานบริการ</span>
+          </button>
+          <button 
+            data-tab="admin_stats" 
+            onclick="App.switchTab('admin_stats')"
+            class="nav-tab-btn px-3 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all"
+          >
+            <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+            <span>สถิติ</span>
+          </button>
+          <button 
+            data-tab="admin_settings" 
+            onclick="App.switchTab('admin_settings')"
+            class="nav-tab-btn px-3 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all"
+          >
+            <i data-lucide="settings" class="w-4 h-4"></i>
+            <span>ตั้งค่า</span>
+          </button>
+        </nav>
+
+        <!-- Right Quick Action & User Profile -->
+        <div class="flex items-center gap-2.5">
+
+
+          <!-- Notification Bell -->
+          <div class="relative">
+            <button 
+              type="button"
+              class="relative p-2 rounded-xl hover:bg-slate-100 text-slate-600 transition-colors" 
+              onclick="App.toggleNotifDropdown(event)"
+              title="การแจ้งเตือน"
+            >
+              <i data-lucide="bell" class="w-5 h-5 text-slate-600"></i>
+              <span id="notif-badge" class="absolute top-1.5 right-1.5 min-w-[16px] h-4 px-1 bg-red-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center ring-2 ring-white">2</span>
+            </button>
+
+            <!-- Notifications Dropdown -->
+            <div id="notif-dropdown" class="hidden absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-xl border border-slate-200 z-50 overflow-hidden">
+              <div class="p-3.5 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                  <i data-lucide="bell" class="w-3.5 h-3.5 text-red-800"></i>
+                  <span>การแจ้งเตือนระบบ</span>
+                </span>
+                <button onclick="App.markAllNotificationsRead()" class="text-[11px] text-red-800 hover:underline font-medium">
+                  อ่านทั้งหมดแล้ว
+                </button>
+              </div>
+              <div id="notif-list" class="max-h-72 overflow-y-auto divide-y divide-slate-100">
+                <!-- Injected dynamically -->
+              </div>
+            </div>
+          </div>
+
+          <div id="user-profile-badge" class="border-l border-slate-200 pl-2 sm:pl-3"></div>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Nav Tab Bar (Role-aware) -->
+  <div id="mobile-nav-bar" class="md:hidden bg-white border-b border-slate-200 px-3 py-2 overflow-x-auto flex items-center gap-1.5 text-xs whitespace-nowrap">
+    <!-- Rendered dynamically by App.renderHeader() -->
+  </div>
+
+  <!-- Dynamic Main Content Area -->
+  <main id="main-content" class="flex-1"></main>
+
+  <!-- Global Footer -->
+  <footer class="bg-white text-slate-500 py-8 border-t border-slate-200/80 text-xs mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-red-800 text-white flex items-center justify-center font-bold text-xs">
+            TU
+          </div>
+          <div>
+            <div class="font-bold text-slate-800">คณะศิลปศาสตร์ มหาวิทยาลัยธรรมศาสตร์</div>
+            <div class="text-slate-400 text-[11px]">Faculty of Liberal Arts, Thammasat University</div>
+          </div>
+        </div>
+        <div class="flex flex-wrap items-center justify-center gap-4 text-slate-600">
+          <span class="flex items-center gap-1"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-red-700"></i> ศูนย์ท่าพระจันทร์</span>
+          <span class="text-slate-300">•</span>
+          <span class="flex items-center gap-1"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-red-700"></i> ศูนย์รังสิต</span>
+          <span class="text-slate-300">•</span>
+          <span class="flex items-center gap-1"><i data-lucide="phone" class="w-3.5 h-3.5 text-slate-400"></i> 02-613-2600</span>
+        </div>
+      </div>
+      <div class="mt-4 pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-slate-400">
+        <div>ระบบบริการจองห้องประชุมออนไลน์ สำหรับคณาจารย์และบุคลากร</div>
+        <div>เวอร์ชันระบบ 2.4 • พัฒนาเพื่อการใช้งานที่สะดวกและรวดเร็ว</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Generic Pop-up Modal Container -->
+  <div id="generic-modal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+    <div id="generic-modal-content" class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-lg w-full max-h-[90vh] overflow-y-auto">
+      <!-- Injected dynamically -->
+    </div>
+  </div>
+
+  <!-- Toast Notification Floating Element -->
+  <div id="toast" class="hidden"></div>
+
+  <!-- Scripts -->
+  <script src="js/calendar-export.js"></script>
+  <script src="js/timeline.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
